@@ -1,12 +1,43 @@
+import { GetStaticProps } from 'next'
 import Head from 'next/head'
-import Image from 'next/image'
-import { Inter } from '@next/font/google'
-import styles from '@/styles/Home.module.css'
 import { Pokemon } from '@/type'
+import { gql, GraphQLClient } from 'graphql-request'
 
-const inter = Inter({ subsets: ['latin'] })
+export const getStaticProps: GetStaticProps = async () => {
+  const endpoint = process.env.END_POINT as string
+  const graphql_client = new GraphQLClient(endpoint, {method: 'POST'})
+  console.log(endpoint)
+  const query = gql`query { pokemons(first: 1){ id number name } }`
+
+  const variables = {
+    "first": 1
+  }
+
+  console.log(query)
+  
+  try {
+    // process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
+
+    const data = await graphql_client.request(query, variables)
+    console.log(data)
+    
+  } catch (error) {
+    console.log(error)
+    throw error
+  }
+
+
+
+  return {
+    props: {
+
+    }
+  }
+}
 
 export default function Home() {
+// console.log('sgasfg', process.env)
+
   return (
     <>
       <Head>
@@ -25,4 +56,4 @@ const pokemon: Pokemon = {
   number: "2313"
 }
 
-console.log(pokemon)
+// console.log(pokemon)
