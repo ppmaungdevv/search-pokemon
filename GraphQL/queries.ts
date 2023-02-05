@@ -1,5 +1,23 @@
 import { gql } from 'graphql-request'
 
+export const getPokeCardQuery = (keyword = 'Blastoise') => {
+  return gql`
+        query{
+          cards(filters: {name: "${keyword}"}, pagination:{page: 1, count: 10}) {
+            id
+            name
+            rarity
+            image
+            attacks {
+              damage
+              effect
+            }
+            evolveFrom
+          }
+        }
+      `
+}
+
 export const query = gql`
 query {
     pokemons($first: first){
@@ -9,17 +27,7 @@ query {
     }
   }
 `
-export const variables = {
-      "first": 1
-    }
 
-export const spxquery = gql`
-    query ExampleQuery {
-        company {
-            ceo
-        }
-        roadster {
-            apoapsis_au
-        }
-    }
-`
+export const variables = {
+  "first": 1
+}

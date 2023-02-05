@@ -1,7 +1,6 @@
 import { GraphQLClient } from 'graphql-request'
 
-// const endpoint = process.env.END_POINT as string
-const endpoint = "https://spacex-production.up.railway.app/"
+const endpoint = "https://api.tcgdex.net/v2/graphql"
 
 const graphQLClient = new GraphQLClient(endpoint)
 
