@@ -1,4 +1,4 @@
-import { GetStaticProps } from 'next'
+import { GetStaticProps, NextPage } from 'next'
 import Head from 'next/head'
 import { Pokemon } from '@/types/type'
 // import { gql, GraphQLClient, request } from 'graphql-request'
@@ -8,6 +8,8 @@ import axios from 'axios'
 import { ApolloClient, InMemoryCache, gql, HttpLink } from '@apollo/client'
 import { SearchBar } from '@/components/SearchBar'
 import { Result } from '@/components/Result'
+import React from 'react'
+import { User } from '@/types/usertype'
 
 
 
@@ -137,8 +139,38 @@ import { Result } from '@/components/Result'
 //   }
 // }
 
-export default function Home() {
-// console.log('sgasfg', process.env)
+type HomeProp = {
+  users: User[]
+}
+
+export const getStaticProps: GetStaticProps<{users: User[]}> = async() => {
+
+  const {data} = await axios.get('https://jsonplaceholder.typicode.com/users') // ?city=Bartholomebury
+  // console.log(data.length)
+  const {data: pokemon} = await axios.get('https://pokeapi.co/api/v2/pokemon/')
+  console.log(pokemon.results[0])
+  return {
+    props: {
+      users: data
+    }
+  }
+}
+
+const Home: NextPage<HomeProp> = ({users}) => {
+
+  const [keyword, setKeyword] = React.useState('')
+  const [dataList, setDataList] = React.useState<User[]>(users)
+
+  const searchWithBtn = async (event: React.MouseEvent<HTMLButtonElement>, value: string) => {
+    try {
+      const {data} = await axios.get('https://jsonplaceholder.typicode.com/users?userName=' + value) // ?city=Bartholomebury
+      setDataList(data)
+      console.log('value', data.length)
+      
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   return (
     <>
@@ -148,16 +180,13 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <SearchBar />
-      <Result />
+      <SearchBar
+        value={keyword}
+        handleChange={(event) => setKeyword(event.target.value)}
+        handleSearch={((event) => searchWithBtn(event, keyword))} />
+      <Result dataList={dataList} />
     </>
   )
 }
 
-const pokemon: Pokemon = {
-  id: "asfgas",
-  name: "pkc",
-  number: "2313"
-}
-
-// console.log(pokemon)
+export default Home

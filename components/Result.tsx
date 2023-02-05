@@ -1,13 +1,18 @@
+import { User } from "@/types/usertype";
 import { PokemonList } from "./PokemonList";
 
-export function Result() {
+type ResultProp = {
+    dataList: User[]
+}
+
+export function Result(props: ResultProp) {
     return (
         <div className="content">
-            <PokemonList />
-            <PokemonList />
-            <PokemonList />
-            <PokemonList />
-            <PokemonList />
+            {
+                props.dataList.map((ele, index) => {
+                    return <PokemonList data={ele} key={index} />
+                })
+            }
         </div>
     );
 }
